@@ -1,0 +1,994 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Analysis of Mcdonald"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Please answer the following questions based on Mcdonald CSV"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 1. Plot graphically which food categories have the highest and lowest varieties."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 2. Which all variables have an outlier?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 3. Which variables have the highest correlation? Plot them and find out the value?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 4. Which category contributes to the maximum % of Cholesterol in a diet (% daily value)?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 5. Which item contributes maximum to the Sodium intake?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 6. Which 4 food items contain the most amount of Saturated Fat?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#  Import lib for the data set"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "import seaborn as sns\n",
+    "import matplotlib.pyplot as plt\n",
+    "%matplotlib inline\n",
+    "from warnings import filterwarnings\n",
+    "filterwarnings(\"ignore\")\n",
+    "pd.set_option('display.float_format', lambda x: '%.2f' % x)\n",
+    "import scipy.stats as stats\n",
+    "import pandas_profiling as pdpro"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Get the Data\n",
+    "df = pd.read_csv('Mcdonald.csv')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "##Show the records of the dataset\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Overview of DataSet"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.tail(10)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# top 10 data showing \n",
+    "df.head(10)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#  shape of data\n",
+    "\n",
+    "df.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# size for data set\n",
+    "\n",
+    "df.size"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#  data info\n",
+    "\n",
+    "df.info()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "##  data showing is 23 columns,260 rows and 20 colums contains int and float values "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.isna().values.any()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## there is no null value in data set "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.isna().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.describe().T"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## decribtion of the data set its contains mean,std min and max value "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Category'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Category'].nunique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Item'].value_counts().head(10)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Item'].nunique()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 1. Plot graphically which food categories have the highest and lowest varieties."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "## Plot graphically which food categories have the highest and lowest varieties\n",
+    "\n",
+    "plt.figure(figsize=(15,7))\n",
+    "df[\"Category\"].hist()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## The highest sales is of : Coffee and Tea\n",
+    "## The lowest sales is of : Salads,Desserts"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "columns = df.columns\n",
+    "columns"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 2. Which all variables have an outlier?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plt.figure(figsize=(15,10))\n",
+    "\n",
+    "sns.boxplot(data=df[['Calories','Calories from Fat','Total Fat','Saturated Fat','Trans Fat','Cholesterol','Sodium']]);"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Checking for the outliers\n",
+    "plt.figure(figsize= (20,15))\n",
+    "plt.subplot(3,1,1)\n",
+    "sns.boxplot(x= df['Calories'], color='lightblue')\n",
+    "\n",
+    "plt.subplot(3,1,2)\n",
+    "sns.boxplot(x= df['Calories from Fat'], color='lightblue')\n",
+    "\n",
+    "plt.subplot(3,1,3)\n",
+    "sns.boxplot(x= df['Total Fat'], color='lightblue')\n",
+    "\n",
+    "\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Checking for the outliers\n",
+    "plt.figure(figsize= (20,15))\n",
+    "plt.subplot(3,1,1)\n",
+    "sns.boxplot(x= df['Saturated Fat'], color='red')\n",
+    "\n",
+    "plt.subplot(3,1,2)\n",
+    "sns.boxplot(x= df['Cholesterol'], color='red')\n",
+    "\n",
+    "plt.subplot(3,1,3)\n",
+    "sns.boxplot(x= df['Trans Fat'], color='red')\n",
+    "\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Checking for the outliers\n",
+    "plt.figure(figsize= (20,15))\n",
+    "plt.subplot(3,1,1)\n",
+    "sns.boxplot(x= df['Sodium'], color='blue')\n",
+    "\n",
+    "plt.subplot(3,1,2)\n",
+    "sns.boxplot(x= df['Dietary Fiber'], color='blue')\n",
+    "\n",
+    "plt.subplot(3,1,3)\n",
+    "sns.boxplot(x= df['Sugars'], color='blue')\n",
+    "\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Checking for the outliers\n",
+    "plt.figure(figsize= (20,15))\n",
+    "plt.subplot(3,1,1)\n",
+    "sns.boxplot(x= df['Protein'], color='g')\n",
+    "\n",
+    "plt.subplot(3,1,2)\n",
+    "sns.boxplot(x= df['Vitamin A (% Daily Value)'], color='g')\n",
+    "\n",
+    "plt.subplot(3,1,3)\n",
+    "sns.boxplot(x= df['Vitamin C (% Daily Value)'], color='g')\n",
+    "\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Checking for the outliers\n",
+    "plt.figure(figsize= (20,15))\n",
+    "plt.subplot(3,1,1)\n",
+    "sns.boxplot(x= df['Calcium (% Daily Value)'], color='lightgreen')\n",
+    "\n",
+    "plt.subplot(3,1,2)\n",
+    "sns.boxplot(x= df['Iron (% Daily Value)'], color='lightgreen')\n",
+    "\n",
+    "plt.subplot(3,1,3)\n",
+    "sns.boxplot(x= df['Carbohydrates'], color='lightgreen')\n",
+    "\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Checking for the outliers\n",
+    "plt.figure(figsize= (20,15))\n",
+    "plt.subplot(3,1,1)\n",
+    "sns.boxplot(x= df['Total Fat (% Daily Value)'], color='grey')\n",
+    "\n",
+    "plt.subplot(3,1,2)\n",
+    "sns.boxplot(x= df['Saturated Fat (% Daily Value)'], color='grey')\n",
+    "\n",
+    "plt.subplot(3,1,3)\n",
+    "sns.boxplot(x= df['Cholesterol (% Daily Value)'], color='grey')\n",
+    "\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Checking for the outliers\n",
+    "plt.figure(figsize= (20,15))\n",
+    "plt.subplot(3,1,1)\n",
+    "sns.boxplot(x= df['Sodium (% Daily Value)'], color='lightblue')\n",
+    "\n",
+    "plt.subplot(3,1,2)\n",
+    "sns.boxplot(x= df['Carbohydrates (% Daily Value)'], color='lightblue')\n",
+    "\n",
+    "plt.subplot(3,1,3)\n",
+    "sns.boxplot(x= df['Dietary Fiber (% Daily Value)'], color='lightblue')\n",
+    "\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Observation Based on the above visualization, the below variables have outlier"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "    Calories outlier  \n",
+    "    Fat outlier \n",
+    "    Total Fat outlier \n",
+    "    Total Fat (% Daily Value) outlier \n",
+    "    Trans Fat outlier \n",
+    "    Cholesterol outlier \n",
+    "    Cholesterol (% Daily Value) outlier \n",
+    "    Sodium outlier \n",
+    "    Sodium (% Daily Value) outlier \n",
+    "    Carbohydrates outlier \n",
+    "    Carbohydrates (% Daily Value) outlier \n",
+    "    Dietary Fiber (% Daily Value) outlier \n",
+    "    Sugars outlier Protein outlier \n",
+    "    Vitamin A (% Daily Value) outlier \n",
+    "    Vitamin C (% Daily Value) outlier \n",
+    "    Calcium (% Daily Value) outlier \n",
+    "    Iron (% Daily Value) outlier"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 3. Which variables have the highest correlation? Plot them and find out the value?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "corrPearson = df.corr(method=\"pearson\")\n",
+    "corrPearson"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "figure = plt.figure(figsize=(20,10))\n",
+    "sns.heatmap(corrPearson,annot=True, vmin=-1, vmax=+1,linecolor='white',square=False)\n",
+    "plt.title(\"PEARSON\")\n",
+    "plt.xlabel(\"COLUMNS\")\n",
+    "plt.ylabel(\"COLUMNS\")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## List of Variables which have Correlation with each other."
+   ]
+  },
+  {
+   "cell_type": "raw",
+   "metadata": {},
+   "source": [
+    "This list is with respect to Calories :-\n",
+    "    Calories & Iron [ 0.64 ]\n",
+    "    Calories & Sodium [ 0.71 ]\n",
+    "    Calories & Cholestrol [ 0.68 ]\n",
+    "    Calories & Saturated Fat [ 0.85 ]\n",
+    "\n",
+    " list is with respect to Total Fat :-\n",
+    "    Total Fat & Iron [ 0.73 ]\n",
+    "    Total Fat & Protien [ 0.81 ]\n",
+    "    Total Fat & Dietary Fiber [ 0.58 ]\n",
+    "    Total Fat & Sodium [ 0.85 ]\n",
+    "    Total Fat & Cholestrol [ 0.68 ]\n",
+    "    Total Fat & Saturated Fat [ 0.85 ]\n",
+    "\n",
+    "list is with respect to Saturated Fat :-\n",
+    "    Saturated Fat & Iron [ 0.58 ]\n",
+    "    Saturated Fat & Protien [ 0.6 ]\n",
+    "    Saturated Fat & Carbohydrates [ 0.58 ]\n",
+    "    Saturated Fat & Sodium [ 0.58 ]\n",
+    "    Saturated Fat & Cholestrol [ 0.63 ]\n",
+    "    \n",
+    "This list is with respect to Sodium :-\n",
+    "    Sodium & Iron [ 0.87 ]\n",
+    "    Sodium & Protien [ 0.87 ]\n",
+    "    Sodium & Dietary Fiber [ 0.69 ]\n",
+    "\n",
+    "This list is with respect to Carbohydrates :-\n",
+    "    Carbohydrates & Calcium [ 0.59 ]\n",
+    "    Carbohydrates & Sugars [ 0.76 ]\n",
+    "\n",
+    "This list is with respect to Dietary Fiber :-\n",
+    "    Dietary Fiber & Iron [ 0.74 ]\n",
+    "\n",
+    "This list is with respect to Sugars :-\n",
+    "    Sugars & Calcium [ 0.6 ]\n",
+    "\n",
+    "This list is with respect to Protien :-\n",
+    "    Protien & Iron [ 0.79 ]  "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## We can now, go ahead select and eat food items that are according to our own Fitness Goals or Health Goals"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "corrSpearman = df.corr(method=\"spearman\")\n",
+    "corrSpearman"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "figure = plt.figure(figsize=(20,10))\n",
+    "sns.heatmap(corrSpearman,annot=True, vmin=-1, vmax=+1)\n",
+    "plt.title(\"Spearman\")\n",
+    "plt.xlabel(\"COLUMNS\")\n",
+    "plt.ylabel(\"COLUMNS\")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 4. Which category contributes to the maximum % of Cholesterol in a diet (% daily value)?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Category'].nunique()\n",
+    "\n",
+    "print('The number of Categories is -', df['Category'].nunique())\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "lstCho = pd.pivot_table(df, 'Cholesterol (% Daily Value)', index=['Category'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Resultlstcho = lstCho.sort_values(('Cholesterol (% Daily Value)'), ascending=False)\n",
+    "\n",
+    "Resultlstcho"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## There is a list above wherein we can see all the 9 different Categories like Breakfast, Salads, Desserts, Beverages etc"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Now, every Category has a corresponding value of Cholesterol (% Daily Value)\n",
+    "\n",
+    "We have sorted and arranged the Categories from High to Low based on the Cholesterol (% Daily Value)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 5. Which item contributes maximum to the Sodium intake?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print('\\n The different type of Food items available at McD are -', df['Item'].nunique())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "itmlst = pd.pivot_table(df, 'Sodium', index=['Item'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "itmlst"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ResultSod = itmlst.sort_values(('Sodium'), ascending=False)\n",
+    "\n",
+    "ResultSod.head(15)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## The item with the Highest Sodium content is Chicken McNuggets (40 piece)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 6. Which 4 food items contain the most amount of Saturated Fat?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "satfatlst = pd.pivot_table(df, 'Saturated Fat', index=['Item'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "satfatlst"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Resultsatfatlst = satfatlst.sort_values(('Saturated Fat'), ascending=False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Resultsatfatlst.head(4)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## The items with the Highest Saturated Fat content are :-"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### McFlurry with M&M’s Candies (Medium)\n",
+    "#### Big Breakfast with Hotcakes (Large Biscuit)\n",
+    "#### Chicken McNuggets (40 piece)\n",
+    "#### Frappé Chocolate Chip (Large)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Calories on each category\n",
+    "# Define dataframes for each category\n",
+    "brkf = df.loc[df.Category == 'Breakfast']\n",
+    "bnp = df.loc[df.Category == 'Beef & Pork']\n",
+    "cnf = df.loc[df.Category == 'Chicken & Fish']\n",
+    "sld = df.loc[df.Category == 'Salads']\n",
+    "snass = df.loc[df.Category == 'Snacks & Sides']\n",
+    "dess = df.loc[df.Category == 'Desserts'] \n",
+    "bev = df.loc[df.Category == 'Beverages']\n",
+    "cnt = df.loc[df.Category == 'Coffee & Tea']\n",
+    "ss = df.loc[df.Category == 'Smoothies & Shakes']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Plot calorie distribution for each category\n",
+    "fig, axes = plt.subplots(3, 3, figsize=(15, 7), sharex=True)\n",
+    "sns.color_palette(\"tab10\")\n",
+    "sns.distplot( brkf[\"Calories\"] , color='red', ax=axes[0, 0], label = \"Breakfast\")\n",
+    "sns.distplot( bnp[\"Calories\"] , color='orange',ax=axes[0, 1], label = \"Beef & Pork\")\n",
+    "sns.distplot( cnf[\"Calories\"] , color='brown',ax=axes[0, 2], label = \"Chicken & Fish\")\n",
+    "sns.distplot( sld[\"Calories\"] , color='lime',ax=axes[1, 0], label = \"Salads\")\n",
+    "sns.distplot( snass[\"Calories\"] , color='green',ax=axes[1, 1], label = \"Snacks & Sides\")\n",
+    "sns.distplot( dess[\"Calories\"] ,  color='teal',ax=axes[1, 2], label = \"Desserts\")\n",
+    "sns.distplot( bev[\"Calories\"] ,  color='gold',ax=axes[2, 0], label = \"Beverages\")\n",
+    "sns.distplot( cnt[\"Calories\"] ,  color='blue',ax=axes[2, 1], label = \"Coffee & Tea\")\n",
+    "sns.distplot( ss[\"Calories\"] ,  color='violet',ax=axes[2, 2], label = \"Smoothies & Shake\")\n",
+    "fig.suptitle(\"Calories Distribution on Each Menu Category\")\n",
+    "fig.legend()\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.boxplot(column='Calories', by='Calcium (% Daily Value)')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ss=df.loc[:,[\"Calcium (% Daily Value)\",\"Vitamin A (% Daily Value)\",\"Vitamin C (% Daily Value)\"]]\n",
+    "ss.plot()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "cat = ['Calories', 'Total Fat', 'Cholesterol','Sodium', 'Sugars', 'Carbohydrates']\n",
+    "\n",
+    "for m in cat:   \n",
+    "    plot = sns.swarmplot(x=\"Category\", y=m, data=df)\n",
+    "    plt.setp(plot.get_xticklabels(), rotation=45)\n",
+    "    plt.title(m)\n",
+    "    plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Distribution Calories"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plt.figure(figsize=(12,5))\n",
+    "plt.title(\"Distribution Calories\")\n",
+    "ax = sns.distplot(df[\"Calories\"], color = 'r')\n",
+    "\n",
+    "print('\\n Calories mean -',df.Calories.mean())\n",
+    "print('\\n Calories median-',df.Calories.median())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Vitamin C Swarmplot"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\n",
+    "plt.figure(figsize=(12,5))\n",
+    "plot = sns.swarmplot(x=\"Category\", y=\"Vitamin C (% Daily Value)\", data=df)\n",
+    "plt.setp(plot.get_xticklabels(),rotation=70)\n",
+    "plt.title(\"Vitamin C (% Daily Value)\")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Calcium Swarmplot"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\n",
+    "plt.figure(figsize=(12,5))\n",
+    "plot = sns.swarmplot(x=\"Category\", y=\"Calcium (% Daily Value)\", data=df)\n",
+    "plt.setp(plot.get_xticklabels(),rotation=70)\n",
+    "plt.title(\"Calcium (% Daily Value)\")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Trans Fat Swarmplot"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\n",
+    "plt.figure(figsize=(12,5))\n",
+    "plot = sns.swarmplot(x=\"Category\", y=\"Trans Fat\", data=df)\n",
+    "plt.setp(plot.get_xticklabels(),rotation=70)\n",
+    "plt.title(\"Trans Fat\")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Cholesterol Swarmplot"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plt.figure(figsize=(12,5))\n",
+    "plot = sns.swarmplot(x=\"Category\", y=\"Cholesterol\", data=df)\n",
+    "plt.setp(plot.get_xticklabels(),rotation=70)\n",
+    "plt.title(\"Cholesterol\")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## about ordering egg whites instead of whole eggs"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "whites = df[df['Item'].str.contains('Egg White')]\n",
+    "whites_cal = pd.DataFrame({'Item': whites.Item, 'Calories': whites.Calories})\n",
+    "whites_sort = whites_cal.sort_values('Calories', ascending=False)\n",
+    "whites_sort.plot.barh(x='Item', y='Calories', figsize= (10,7))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Get caloric intake contribution from Beverages category"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "cal_bev = pd.DataFrame({'Item': bev.Item, 'Calories': bev.Calories})\n",
+    "cal_bev['Men'] = cal_bev.Calories/2500\n",
+    "cal_bev['Women'] = cal_bev.Calories/2000\n",
+    "cal_bev"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
